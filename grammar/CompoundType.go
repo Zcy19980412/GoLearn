@@ -17,7 +17,7 @@ func main() {
 	//testStruct()
 
 	//point
-	testPoint()
+	//testPoint()
 
 }
 
@@ -83,6 +83,9 @@ func testStruct() {
 	students[2] = Student{}
 	fmt.Println(students)
 	students[1].age = 26
+	fmt.Println(students)
+
+	testChangeSliceStructValue(students)
 	fmt.Println(students)
 
 	//map crud
@@ -194,4 +197,16 @@ func testArray() {
 
 func testArrayPassValue(arr [3]int) {
 	arr[0] = 200
+}
+
+// !!!struct has nothing with pointer
+func testChangeSliceStructValue(slice []Student) {
+	//won't change
+	//for i := 0; i < len(slice); i++ {
+	//	slice[i].name = "testChangeSliceValue"
+	//}
+	//will change
+	for _, value := range slice {
+		value.name = "testChangeSliceValue"
+	}
 }
