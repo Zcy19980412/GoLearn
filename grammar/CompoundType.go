@@ -8,7 +8,71 @@ func main() {
 	//testArray()
 
 	//slice
-	testSlice()
+	//testSlice()
+
+	//map
+	//testMap()
+
+	//struct
+	testStruct()
+}
+
+type Student struct {
+	name string
+	age  int
+}
+
+func testStruct() {
+	//init
+	var student Student
+	student.name = "jack"
+	student.age = 23
+	fmt.Println(student)
+	var student2 Student = Student{name: "calvin", age: 23}
+	fmt.Println(student2)
+
+	//slice crud
+	var students []Student = []Student{{name: "jack", age: 23}, {name: "calvin", age: 23}}
+	fmt.Println(students)
+	students = append(students, student2)
+	fmt.Println(students)
+	students[2] = Student{}
+	fmt.Println(students)
+	students[1].age = 26
+	fmt.Println(students)
+
+	//map crud
+	var studentMap map[int]Student = make(map[int]Student)
+	studentMap[1] = Student{name: "jack", age: 23}
+	studentMap[2] = Student{name: "calvin", age: 23}
+	fmt.Println(studentMap)
+	delete(studentMap, 1)
+	fmt.Println(studentMap)
+	//point
+	//studentMap[2].age = 22
+	fmt.Println(studentMap)
+}
+
+func testMap() {
+	//init
+	var m1 = map[string]int{"java": 12, "python": 34, "Go": 23}
+	m2 := map[string]int{"java": 12, "python": 34, "Go": 23}
+	m3 := make(map[string]int)
+	fmt.Println(m1, m2, m3)
+
+	//set and get
+	m3["java"] = 12
+	m3["python"] = 34
+	v, exist := m1["java"]
+	fmt.Println(v, exist)
+
+	//for range
+	for k, v := range m1 {
+		fmt.Println(k, v)
+	}
+	//delete
+	delete(m1, "java")
+	fmt.Println(m1)
 
 }
 
