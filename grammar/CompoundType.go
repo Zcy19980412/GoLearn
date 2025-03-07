@@ -14,7 +14,51 @@ func main() {
 	//testMap()
 
 	//struct
-	testStruct()
+	//testStruct()
+
+	//point
+	testPoint()
+
+}
+
+func testPoint() {
+	var a int = 2
+	var p *int = &a
+	fmt.Println(&a)
+	fmt.Println(p)
+	fmt.Println(&p)
+	fmt.Println(*p)
+	*p = 222
+	fmt.Println(a)
+
+	//arr
+	var arr1 [3]int = [3]int{1, 2, 3}
+	var pArr1 *[3]int = &arr1
+	fmt.Println(pArr1)
+	(*pArr1)[0] = 100
+	fmt.Println(arr1)
+
+	//[]point
+	p1 := new(int)
+	p2 := new(int)
+	p3 := new(int)
+	fmt.Println(p1, *p2, p3)
+	*p1 = 1
+	*p2 = 2
+	*p3 = 3
+	var numsPoint [3]*int = [3]*int{p1, p2, p3}
+	fmt.Println(numsPoint)
+	for _, value := range numsPoint {
+		fmt.Println(*value)
+	}
+
+	//struct
+
+	//map
+	var map1 map[int]string = map[int]string{1: "a", 2: "b", 3: "c"}
+	map1[1] = "4"
+	fmt.Println(map1)
+
 }
 
 type Student struct {
