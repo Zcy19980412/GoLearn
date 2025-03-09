@@ -7,6 +7,9 @@ func main() {
 	//testPolymorphism
 	testPolymorphism()
 
+	//testAny
+	testAny()
+
 }
 
 func testPolymorphism() {
@@ -14,6 +17,17 @@ func testPolymorphism() {
 	var mouse Mouse
 	DeviceConnect(&keyBoard)
 	DeviceConnect(&mouse)
+}
+
+func testAny() {
+	// any is alias of interface{}
+	var i interface{}
+	i = []any{1, "1", 4, true}
+	fmt.Println(i)
+	value, ok := i.([]any)
+	fmt.Println(value, ok)
+	value1, ok1 := value[1].(string)
+	fmt.Println(value1, ok1)
 }
 
 // ------------------- device demo -------------------
