@@ -9,10 +9,10 @@ func main() {
 
 	//slice
 	//testSlice()
-	testSliceFunc()
+	//testSliceFunc()
 
 	//map
-	//testMap()
+	testMap()
 
 	//struct
 	//testStruct()
@@ -121,6 +121,11 @@ func testMap() {
 	//delete
 	delete(m1, "java")
 	fmt.Println(m1)
+
+	//exist
+	if k, v := m1["Go"]; v {
+		fmt.Println(k, v)
+	}
 
 }
 
