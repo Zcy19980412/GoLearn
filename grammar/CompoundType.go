@@ -12,10 +12,10 @@ func main() {
 	//testSliceFunc()
 
 	//map
-	testMap()
+	//testMap()
 
 	//struct
-	//testStruct()
+	testStruct()
 
 	//point
 	//testPoint()
@@ -63,6 +63,7 @@ func testPoint() {
 }
 
 type Student struct {
+	//结构体是一种类型  等价于  int  byte  []int ...
 	name string
 	age  int
 }
@@ -73,8 +74,17 @@ func testStruct() {
 	student.name = "jack"
 	student.age = 23
 	fmt.Println(student)
-	var student2 Student = Student{name: "calvin", age: 23}
+	var student2 Student = Student{"calvin", 23}
 	fmt.Println(student2)
+	student3 := Student{}
+	fmt.Println(student3)
+	student4 := &Student{}
+	fmt.Println(*student4)
+	student5 := new(Student)
+	fmt.Println(*student5)
+	//compare
+	eq := *student4 == *student5
+	fmt.Println(eq)
 
 	//slice crud
 	var students []Student = []Student{{name: "jack", age: 23}, {name: "calvin", age: 23}}
