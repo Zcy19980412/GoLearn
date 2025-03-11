@@ -9,6 +9,7 @@ func main() {
 
 	//slice
 	//testSlice()
+	testSliceFunc()
 
 	//map
 	//testMap()
@@ -160,6 +161,29 @@ func testSlice() {
 	copy(copy2, copy1)
 	fmt.Println(copy1, copy2)
 
+}
+
+func testSliceFunc() {
+	//var slice []int = make([]int, 5, 10)
+	//fmt.Println(slice)
+	//fmt.Println("slice' len", len(slice))
+	//fmt.Println("slice' cap", cap(slice))
+	//
+
+	var arr [5]int = [5]int{1, 2, 3, 4, 5}
+	//var arr = []int{1, 2, 3, 4, 5}
+
+	//[low:high:max]  len = high-low  cap = max - low
+	slice := arr[1:3]
+	fmt.Println(slice)
+	fmt.Println("len:", len(slice))
+	fmt.Println("cap:", cap(slice))
+
+	//test append
+	//sliceAppend := append(slice, 1, 2, 3, 4, 5, 5, 6, 7)
+	sliceAppend := append(slice, 1)
+	fmt.Println(slice)
+	fmt.Println(sliceAppend)
 }
 
 func testArray() {
