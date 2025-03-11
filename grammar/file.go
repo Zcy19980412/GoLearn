@@ -9,7 +9,8 @@ import (
 func main() {
 	//testCreate()
 	//testWrite()
-	testRead()
+	//testRead()
+	testCopy()
 }
 
 func testCreate() {
@@ -78,5 +79,24 @@ func testRead() {
 		fmt.Println(string(contents))
 	}
 	fmt.Println(string(contents))
+
+}
+
+func testCopy() {
+	srcFile, err := os.OpenFile("D://test.txt", os.O_RDONLY, os.ModeAppend)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create("D://test2.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }
