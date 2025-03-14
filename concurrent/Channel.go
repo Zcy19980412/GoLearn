@@ -6,7 +6,32 @@ import (
 )
 
 func main() {
-	testChannel()
+	//testChannel()
+	//testTimer()
+	testTicker()
+}
+
+func testTimer() {
+	fmt.Println(time.Now())
+	timer := time.NewTimer(1 * time.Second)
+	a := <-timer.C
+	fmt.Println(a)
+	fmt.Println(time.Now())
+
+}
+
+// 间隔任务
+func testTicker() {
+	//tick per 5s
+	ticker := time.NewTicker(5 * time.Second)
+	go func() {
+		for t := range ticker.C {
+			fmt.Println("Tick at", t)
+		}
+	}()
+	for {
+	}
+
 }
 
 func testChannel() {
