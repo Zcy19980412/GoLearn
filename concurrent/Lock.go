@@ -8,6 +8,7 @@ import (
 
 func main() {
 	/**
+	并发是为了提升效率，但是并发中 “如果涉及到了共享变量的读和写” ，必须考虑加锁
 	Go 只保留最核心的 互斥锁 和 读写锁。
 
 	首先涉及到共享数据的并发修改，那么一定要保证原子性，通过atomic或者加锁（mutex）的方式。
@@ -36,7 +37,10 @@ func main() {
 
 	//testDeadLock()
 	//testMutex()
-	testRWMutex()
+	//testRWMutex1()
+	//testRWMutex2()
+	//testRWMutex3()
+	testRWMutex4()
 }
 
 func testDeadLock() {
@@ -76,42 +80,121 @@ func testMutex() {
 
 }
 
-func testRWMutex() {
-	//细颗粒度的锁：覆盖率互斥锁的功能，添加了读锁，特点是在读锁被释放时，写锁可以并发，否则阻塞
-	//假如有一个学校在招生，多个窗口同时录入学生，每招一个学生，统计数据： 总学生人数，全校总人数。都应该被+1。 这一篮子操作应具有原子性。
-	//如果仅使用 写锁锁住 {总学生人数+1; 全校总人数+;}可以保证最后的人数总是正确的。  但是过程中的读取，比如总学生人数+1后 两列数据被读取
-	//则出现错误。 所以  读取不应该在写入过程中。 故而产生了读锁。
+//---------------重要---------------
+//细颗粒度的锁：覆盖率互斥锁的功能，添加了读锁，特点是在读锁被释放时，写锁可以并发，否则阻塞
+//假如有一个学校在招生，多个窗口同时录入学生，每招一个学生，统计数据： 总学生人数，全校总人数。都应该被+1。 这一篮子操作应具有原子性。
+//如果仅使用 写锁锁住 {总学生人数+1; 全校总人数+;}可以保证最后的人数总是正确的。  但是过程中的读取，比如总学生人数+1后 两列数据被读取
+//则出现错误。 所以  读取不应该在写入过程中。 故而产生了读锁。
 
-	//10个窗口同时录入学生，1个窗口录入10个
+// 第一种情况（并发写不加锁）： 共享资源并发写入不加锁，导致最终数据错误
+func testRWMutex1() {
 
-	var count1Int = 0
-	var count2Int = 0
-	count1 := &count1Int
-	count2 := &count2Int
+	var count1 = 0
+	var count2 = 0
 
-	for i := 0; i < 10; i++ {
-		//go func() {
-		//	for range 10 {
-		//		count1++
-		//		time.Sleep(100 * time.Millisecond)
-		//		count2++
-		//	}
-		//}()
-		go increase(count1, count2)
+	for range 1000 {
+		go func() {
+			for range 1000 {
+				count1++
+				count2++
+			}
+		}()
+	}
+	<-time.After(5 * time.Second)
+	fmt.Println(count1, count2)
+}
+
+// 第二种情况（并发写加锁  并发读不加锁）： 共享资源并发写入加锁，使得最终数据正确，但是并发读的过程中不加锁导致错误
+func testRWMutex2() {
+	count1 := 0
+	count2 := 0
+
+	mutex := sync.Mutex{}
+
+	for range 1000 {
+		go func() {
+			for range 1000 {
+				mutex.Lock()
+				count1++
+				count2++
+				mutex.Unlock()
+			}
+		}()
+	}
+
+	for range 1000 {
+		go func() {
+			if count1 != count2 {
+				fmt.Println("count1 != count2", count1, count2)
+			}
+		}()
 	}
 
 	<-time.After(5 * time.Second)
-	fmt.Println(*count1, *count2)
-
-	for {
-	}
+	fmt.Println("final:", count1, count2)
 
 }
 
-func increase(count1, count2 *int) {
-	for range 10 {
-		*count1++
-		time.Sleep(100 * time.Millisecond)
-		*count2++
+// 第三种情况（并发写加互斥锁  并发读也加互斥锁）： 共享资源并发写入加锁，使得最终数据正确，并发读也加互斥锁
+func testRWMutex3() {
+	count1 := 0
+	count2 := 0
+
+	mutex := sync.Mutex{}
+
+	for range 1000 {
+		go func() {
+			for range 1000 {
+				mutex.Lock()
+				count1++
+				count2++
+				mutex.Unlock()
+			}
+		}()
 	}
+
+	for range 1000 {
+		go func() {
+			mutex.Lock()
+			if count1 != count2 {
+				fmt.Println("count1 != count2", count1, count2)
+			}
+			mutex.Unlock()
+		}()
+	}
+
+	<-time.After(5 * time.Second)
+	fmt.Println("final:", count1, count2)
+}
+
+// 第四种情况（并发写加写锁  并发读也加读锁）： 读锁运行时，会将所有读操作进行完后，再切换到写锁，如果读多，写少，会造成写者饥饿。
+func testRWMutex4() {
+	count1 := 0
+	count2 := 0
+
+	mutex := sync.RWMutex{}
+
+	for range 1000 {
+		go func() {
+			for range 1000 {
+				mutex.Lock()
+				count1++
+				count2++
+				mutex.Unlock()
+			}
+		}()
+	}
+
+	for range 1000 {
+		go func() {
+			mutex.RLock()
+			if count1 != count2 {
+				fmt.Println("count1 != count2", count1, count2)
+			}
+			mutex.RUnlock()
+		}()
+	}
+
+	<-time.After(5 * time.Second)
+	fmt.Println("final:", count1, count2)
 }
