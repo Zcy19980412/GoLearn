@@ -40,7 +40,8 @@ func main() {
 	//testRWMutex1()
 	//testRWMutex2()
 	//testRWMutex3()
-	testRWMutex4()
+	//testRWMutex4()
+	testCond()
 }
 
 func testDeadLock() {
@@ -197,4 +198,53 @@ func testRWMutex4() {
 
 	<-time.After(5 * time.Second)
 	fmt.Println("final:", count1, count2)
+}
+
+func testCond() {
+	//cond 是 锁的附加工具，适用于某些lock需要条件且不满足条件时等待的场景。  cond 相比于 直接if判断，增加了等待的功能，而不是继续执行程序
+	//比如生产者-消费者模型中。  如果消费者速度比生产者速度快，消费者是需要 "等待" 生产者的通知的。 这个等待可以用消耗资源的for实现，但是cond.wait()才是标准实现
+	//比如生产者-消费者模型。 对于中间商品的货架，生产者需要在货架还有剩余位置时才能进行生产，消费者需要在货架上还有商品时进行消费，否则会发生错误
+	//这种 条件+go程通知 就是cond的设计目的  go程之间的相互通知，提供wait signal broadcast方法来互相协作
+
+	//channel： go程间传递数据
+	//共享变量：go程间的公共变量
+	//锁机制： 保证共享变量的读写的原子性
+	//条件变量： 根据条件来调度，通知锁。（增强锁的功能）
+	var table []int
+
+	mutex := sync.Mutex{}
+
+	cond := sync.Cond{L: &mutex}
+
+	for range 100 {
+		go func() {
+			for i := range 100 {
+				time.Sleep(10 * time.Millisecond)
+				cond.L.Lock()
+				table = append(table, i)
+				cond.Signal()
+				cond.L.Unlock()
+				fmt.Println("write", i, "len", len(table))
+			}
+		}()
+	}
+
+	for range 10000 {
+		go func() {
+			mutex.Lock()
+			for len(table) == 0 {
+				//阻塞等待唤醒
+				cond.Wait()
+			}
+			if len(table) > 0 {
+				fmt.Println("read", table[0], "len", len(table))
+				table = table[1:]
+			}
+			mutex.Unlock()
+		}()
+	}
+
+	for {
+	}
+
 }
