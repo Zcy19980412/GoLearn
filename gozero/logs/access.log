@@ -1,0 +1,3 @@
+{"@timestamp":"2025-03-27T21:10:23.970+08:00","caller":"gozero/main.go:36","content":"调用方法","level":"info"}
+{"@timestamp":"2025-03-27T21:10:23.970+08:00","caller":"gozero/main.go:37","content":"123","level":"info"}
+{"@timestamp":"2025-03-27T21:10:23.970+08:00","caller":"handler/loghandler.go:147","content":"[HTTP] 200 - GET / - 127.0.0.1:58017 - PostmanRuntime/7.29.2","duration":"0.5ms","level":"info","span":"3f6c7febcabe3fce","trace":"a27c7fe1db93ac6e6a92fdae4d9100ba"}
