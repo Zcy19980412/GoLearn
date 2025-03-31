@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"github.com/zeromicro/go-zero/core/logc"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
@@ -30,12 +29,6 @@ func main() {
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
 
-	ctx1 := context.Background()
-	context.WithValue(ctx1, "1", 1)
-	ctx2 := context.Background()
-	context.WithValue(ctx2, "1", 2)
-	fmt.Println(ctx1.Value("1"))
-	fmt.Println(ctx2.Value("1"))
 	server.AddRoute(rest.Route{
 		Method: http.MethodGet,
 		Path:   "/",

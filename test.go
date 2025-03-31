@@ -3,18 +3,32 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
 )
+
+type Config struct {
+	Name string
+	Port int
+}
+
+var waitgroup = sync.WaitGroup{}
 
 func main() {
 	background := context.Background()
-	background2 := context.Background()
+	waitgroup.Add(1)
 
-	fmt.Printf("background: %p\n", background)
-	fmt.Printf("background2: %p\n", background2)
+	value := context.WithValue(background, "1", Config{
+		Name: "test",
+		Port: 1234,
+	})
 
-	if background == background2 {
-		fmt.Println("background 和 background2 是同一个实例")
-	} else {
-		fmt.Println("background 和 background2 不是同一个实例")
-	}
+	go printValue(value)
+
+	waitgroup.Wait()
+
+}
+
+func printValue(v context.Context) {
+	fmt.Println(v.Value("1"))
+	waitgroup.Done()
 }
