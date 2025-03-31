@@ -8,7 +8,30 @@ import (
 func main() {
 	//testChannel()
 	//testTimer()
-	testTicker()
+	//testTicker()
+	testClose()
+}
+
+func testClose() {
+	c := make(chan int)
+	go func() {
+		for {
+			select {
+			case <-c:
+				return
+			default:
+				time.Sleep(1 * time.Second)
+				fmt.Println("c" + time.Now().Format("2006-01-02 15:04:05"))
+			}
+		}
+	}()
+
+	time.Sleep(10 * time.Second)
+	//when channel close, all <-channel receive {}
+	close(c)
+	time.Sleep(3 * time.Second)
+	fmt.Println("c" + time.Now().Format("2006-01-02 15:04:05"))
+
 }
 
 func testTimer() {
