@@ -52,7 +52,7 @@ func testHttp() {
 }
 
 func testMysql() {
-	open, err := sql.Open("mysql", "root:123456@(127.0.0.1:3306)/todolist")
+	open, err := sql.Open("mysql", "root:root@(127.0.0.1:3306)/todolist")
 	errFunc(err, "open")
 	defer open.Close()
 
